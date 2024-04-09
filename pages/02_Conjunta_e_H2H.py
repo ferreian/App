@@ -172,7 +172,8 @@ with tab1:
             "FIBRA": "red",
             "19NAM15649-F-21101609-6": "green",
             "18NA410034-E-053": "purple",
-            "DM 66I68": "red"
+            "DM 66I68": "red",
+            "DM 56I59": "red"
         }
 
         
@@ -213,7 +214,10 @@ with tab1:
         filtered_df.rename(columns={'PROD_sc_ha_corr': 'PROD sc/ha'}, inplace=True)
 
         # Definir as colunas a serem exibidas na tabela
-        columns_to_display = ['MACRO', 'REC', 'MICRO', 'LOCAL', 'LINE', 'PROD sc/ha', 'MAT', 'U', 'NP', 'NV', 'AIV', 'ALT', 'AC', 'Ambiente', 'CV(%)']
+        columns_to_display = ['MACRO', 'REC', 'MICRO', 'LOCAL', 'LINE', 
+                              'PROD sc/ha','PMS_corr', 'MAT', 'U', 'NP', 'NV', 'AIV', 
+                              'ALT', 'AC','De','MP','O','MAL','ANT','MOR',
+                              'MAP','CER','ANO','DFC', 'Ambiente']
 
         # Criar a tabela com as colunas especificadas
         table_to_display = filtered_df[columns_to_display].reset_index(drop=True)
