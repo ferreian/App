@@ -205,8 +205,14 @@ with tab3:
 
                 # Exibir o gráfico
                 st.plotly_chart(fig, use_container_width=True)
+                
+                # Filtro de genótipo
+                genotipos_disponiveis = df['LINE'].unique()
+                genotipos_selecionados = st.multiselect('Selecione o Genótipo', genotipos_disponiveis, default=genotipos_disponiveis)
 
             else:
                 st.warning("Não há dados disponíveis após a filtragem.")
         else:
             st.warning("O DataFrame está vazio ou não foi carregado.")
+
+
