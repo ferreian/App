@@ -215,9 +215,12 @@ with tab1:
 
         # Definir as colunas a serem exibidas na tabela
         columns_to_display = ['MACRO', 'REC', 'MICRO', 'LOCAL', 'LINE', 
-                              'PROD sc/ha','PMS_corr', 'MAT', 'U', 'NP', 'NV', 'AIV', 
-                              'ALT', 'AC','De','MP','O','MAL','ANT','MOR',
-                              'MAP','CER','ANO','DFC', 'Ambiente']
+                            'PROD sc/ha','PMS_corr', 'MAT', 'U', 'NP', 'NV', 'AIV', 
+                            'ALT', 'AC','De','MP','O','MAL','ANT','MOR',
+                            'MAP','CER','ANO','DFC', 'Ambiente']
+
+        # Formatar as colunas numéricas para exibição como números inteiros
+        formatted_df = filtered_df[columns_to_display].style.format({col: "{:.0f}" for col in columns_to_display if col not in ['MACRO', 'REC', 'MICRO', 'LOCAL', 'LINE', 'Ambiente']})
 
         # Criar a tabela com as colunas especificadas
         table_to_display = filtered_df[columns_to_display].reset_index(drop=True)
