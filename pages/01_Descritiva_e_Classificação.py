@@ -164,7 +164,14 @@ with tab3:
                 # Calcular a porcentagem relativa para cada linha em cada local
                 df_filtrado['Relative_Yield'] = (df_filtrado['PROD_sc_ha_corr'] / max_values_por_local) * 100
 
-                pivot_table_relative_yield = pd.pivot_table(df_filtrado, values='Relative_Yield', index='LOCAL', columns='LINE', aggfunc='mean')
+                # Filtro de genótipo
+                genotipos_disponiveis = df['LINE'].unique()
+                genotipos_selecionados = st.multiselect('Selecione o Genótipo', genotipos_disponiveis, default=genotipos_disponiveis)
+
+                # Filtrar o DataFrame pelos genótipos selecionados
+                df_filtrado_genotipo = df_filtrado[df_filtrado['LINE'].isin(genotipos_selecionados)]
+
+                pivot_table_relative_yield = pd.pivot_table(df_filtrado_genotipo, values='Relative_Yield', index='LOCAL', columns='LINE', aggfunc='mean')
 
                 # Criar o gráfico
                 fig = px.imshow(
@@ -206,13 +213,11 @@ with tab3:
                 # Exibir o gráfico
                 st.plotly_chart(fig, use_container_width=True)
                 
-                # Filtro de genótipo
-                genotipos_disponiveis = df['LINE'].unique()
-                genotipos_selecionados = st.multiselect('Selecione o Genótipo', genotipos_disponiveis, default=genotipos_disponiveis)
-
             else:
                 st.warning("Não há dados disponíveis após a filtragem.")
         else:
             st.warning("O DataFrame está vazio ou não foi carregado.")
+
+
 
 
