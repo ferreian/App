@@ -229,6 +229,7 @@ with tab1:
         # Calcula as médias das colunas originais desejadas por linha (LINE)
         mean_values_by_line = filtered_df.groupby('LINE').agg({
             'PROD sc/ha': 'mean',
+            'PMS_corr':'mean',
             'MAT': 'mean',
             'U': 'mean',
             'NP': 'mean',
