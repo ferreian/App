@@ -225,7 +225,8 @@ with tab1:
         # Criar a tabela com as colunas especificadas
         table_to_display = filtered_df[columns_to_display].reset_index(drop=True)
 
-        # Calcula as médias das colunas desejadas por linha (LINE)
+       
+        # Calcula as médias das colunas originais desejadas por linha (LINE)
         mean_values_by_line = filtered_df.groupby('LINE').agg({
             'PROD sc/ha': 'mean',
             'MAT': 'mean',
@@ -235,30 +236,60 @@ with tab1:
             'AIV': 'mean',
             'ALT': 'mean',
             'AC': 'mean',
-            'CV(%)': 'mean'
+            'CV(%)': 'mean',
         }).reset_index()
 
-        # Renomeia as colunas para indicar que são médias
-        mean_values_by_line.columns = [col + '_mean' if col != 'LINE' else col for col in mean_values_by_line.columns]
+        # Calcula os mínimos das colunas adicionadas por último por linha (LINE)
+        min_values_by_line = filtered_df.groupby('LINE').agg({
+            'De': 'min',
+            'MP': 'min',
+            'O': 'min',
+            'MAL': 'min',
+            'ANT': 'min',
+            'MOR': 'min',
+            'MAP': 'min',
+            'CER': 'min',
+            'ANO': 'min',
+            'DFC': 'min'
+        }).reset_index()
+
+        # Combina os DataFrames mean_values_by_line e min_values_by_line
+        merged_values_by_line = pd.merge(mean_values_by_line, min_values_by_line, on='LINE')
+
+        # Renomeia as colunas para indicar que são médias ou mínimos
+        merged_values_by_line.rename(columns={
+            'De': 'De_min',
+            'MP': 'MP_min',
+            'O': 'O_min',
+            'MAL': 'MAL_min',
+            'ANT': 'ANT_min',
+            'MOR': 'MOR_min',
+            'MAP': 'MAP_min',
+            'CER': 'CER_min',
+            'ANO': 'ANO_min',
+            'DFC': 'DFC_min'
+        }, inplace=True)
 
         # Definir a coluna 'LINE' como o índice
-        mean_values_by_line.set_index('LINE', inplace=True)
+        merged_values_by_line.set_index('LINE', inplace=True)
 
-        # Ordena o DataFrame das médias por linha
-        mean_values_by_line_sorted = mean_values_by_line.sort_values('PROD sc/ha_mean', ascending=False)
+        # Ordena o DataFrame combinado por linha
+        merged_values_by_line_sorted = merged_values_by_line.sort_values('PROD sc/ha', ascending=False)
 
-         #Converter apenas as colunas numéricas para inteiros, tratando os valores NaN
-        numeric_columns = mean_values_by_line_sorted.select_dtypes(include=['int', 'float']).columns
+        # Converter apenas as colunas numéricas para inteiros, tratando os valores NaN
+        numeric_columns = merged_values_by_line_sorted.select_dtypes(include=['int', 'float']).columns
         for col in numeric_columns:
-            mean_values_by_line_sorted[col] = mean_values_by_line_sorted[col].fillna(0).astype(int)
+            merged_values_by_line_sorted[col] = merged_values_by_line_sorted[col].fillna(0).astype(int)
 
         # Atualizar as colunas não numéricas para uma casa decimal
-        non_numeric_columns = mean_values_by_line_sorted.select_dtypes(exclude=['int', 'float']).columns
-        mean_values_by_line_sorted[non_numeric_columns] = mean_values_by_line_sorted[non_numeric_columns].round(1)
+        non_numeric_columns = merged_values_by_line_sorted.select_dtypes(exclude=['int', 'float']).columns
+        merged_values_by_line_sorted[non_numeric_columns] = merged_values_by_line_sorted[non_numeric_columns].round(1)
 
-        # Exibe o DataFrame com as médias calculadas por linha, ordenado
-        st.write("Tabela com dados médios")
-        st.dataframe(mean_values_by_line_sorted)
+        # Exibe o DataFrame combinado com as médias e mínimos calculados por linha, ordenado
+        st.write("Tabela com dados médios e mínimos")
+        st.dataframe(merged_values_by_line_sorted)
+
+
 
         st.divider()
 
@@ -266,6 +297,7 @@ with tab1:
         st.write("Tabela Completa")
         st.dataframe(table_to_display)
 
+       
 
 with tab2:
     st.header("Análise HEAD TO HEAD")
@@ -424,6 +456,3 @@ with tab2:
             with col2:
                 st.write("Médias de Características por Genótipo:")
                 st.dataframe(media_caracteristicas_pivot_styled)
-
-
-           
