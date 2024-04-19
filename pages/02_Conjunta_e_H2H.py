@@ -315,11 +315,17 @@ with tab2:
         
         with col2:
             genotipo2 = st.selectbox('Selecione o Genótipo 2:', genotipos, index=1, key='genotipo2')
-        
+
+        # Adicione um filtro para selecionar os locais a serem excluídos
+        locais_para_excluir = st.multiselect("Excluir Locais:", options=df['LOCAL'].unique())
+
         if st.button('Analisar e Visualizar'):
             # Filtrar o DataFrame com base nos genótipos selecionados
             df_filtered = df[df['LINE'].isin([genotipo1, genotipo2])]
-            
+
+            # Excluir os locais selecionados da análise
+            df_filtered = df_filtered[~df_filtered['LOCAL'].isin(locais_para_excluir)]
+
             # Aplicar os filtros do sidebar ao DataFrame filtrado
             if selected_lines:
                 df_filtered = df_filtered[df_filtered['LINE'].isin(selected_lines)]
@@ -419,17 +425,6 @@ with tab2:
                 
             st.plotly_chart(fig, use_container_width=True)
             
-            # Calcular a média de MAT, U, NP, NV, AIV, ALT e AC para cada LINE
-            media_caracteristicas_por_line = df_filtered.groupby('LINE').agg({
-                'MAT': 'mean',
-                'U': 'mean',
-                'NP': 'mean',
-                'NV': 'mean',
-                'AIV': 'mean',
-                'ALT': 'mean',
-                'AC': 'mean'
-            }).reset_index()
-
             # Calcular a média de MAT, U, NP, NV, AIV, ALT e AC para cada LINE
             media_caracteristicas_por_line = df_filtered.groupby('LINE').agg({
                 'MAT': 'mean',
